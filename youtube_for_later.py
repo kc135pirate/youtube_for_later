@@ -26,12 +26,25 @@ import re
 
 def installer():
 
-    name = raw_input('\n\nPlease name your database:')
+    createDB()
     token = raw_input('Please enter your Telegram Bot token:')
     f = open('.youtube_for_later','w')
     f.write(name + '\n')
     f.write(token)
 
+def createDB():
+
+    conn = db.connect('.telegram_for_later.db')
+    c = conn.cursor()
+
+    try:
+        text='create table link(links varchar primary key);'
+        c.execute(text)
+
+    except db.OperationalError:
+        pass
+
+    return
 
 
 
