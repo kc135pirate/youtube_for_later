@@ -23,3 +23,17 @@
 import os
 import urllib
 import re
+
+def installer():
+
+    name = raw_input('\n\nPlease name your database:')
+    token = raw_input('Please enter your Telegram Bot token:')
+    f = open('.youtube_for_later','w')
+    f.write(name + '\n')
+    f.write(token)
+
+
+
+
+if __name__ == '__main__':
+    installer()
