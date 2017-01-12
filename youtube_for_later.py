@@ -23,14 +23,22 @@
 import os
 import urllib
 import re
+import sqlite3 as db
 
 def installer():
 
-    createDB()
-    token = raw_input('Please enter your Telegram Bot token:')
-    f = open('.youtube_for_later','w')
-    f.write(name + '\n')
-    f.write(token)
+    setupVariable = createDB()
+
+    if setupVariable == 0:
+
+        conn = db.connect('.telegram_for_later.db')
+        c = conn.cursor()
+        c.execute('create table token(ID varchar primary key);')
+        token = raw_input('Please enter your Telegram Bot token:')
+        c.execute('insert into token values ("%s");') % token
+        conn.commit
+
+    return
 
 def createDB():
 
@@ -42,9 +50,9 @@ def createDB():
         c.execute(text)
 
     except db.OperationalError:
-        pass
+        return 1
 
-    return
+    return 0
 
 
 
