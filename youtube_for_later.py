@@ -25,7 +25,7 @@ import urllib
 import re
 import sqlite3 as db
 
-def installer(conn, c):
+def createBotTable(conn, c):
     """This will only run on the initial setup of the
     script. It will query the user for the telegram bot
     ID and will store it in the sqlite database.
@@ -54,7 +54,7 @@ def createDB():
     except db.OperationalError:
         return
 
-    installer(conn, c)
+    createBotTable(conn, c)
 
     return
 
