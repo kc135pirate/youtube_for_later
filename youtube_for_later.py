@@ -25,37 +25,45 @@ import urllib
 import re
 import sqlite3 as db
 
-def installer():
+def installer(conn, c):
+    """This will only run on the initial setup of the
+    script. It will query the user for the telegram bot
+    ID and will store it in the sqlite database.
+    """
 
-    setupVariable = createDB()
-
-    if setupVariable == 0:
-
-        conn = db.connect('.telegram_for_later.db')
-        c = conn.cursor()
-        c.execute('create table token(ID varchar primary key);')
-        token = raw_input('Please enter your Telegram Bot token:')
-        c.execute('insert into token values ("%s");') % token
-        conn.commit
-
+    c.execute('create table token(bot_token varchar);')
+    token = raw_input('Please enter your Telegram Bot token:')
+    dbEntry = 'insert into token values (\'%s\');' % token
+    c.execute(dbEntry)
+    conn.commit
     return
 
 def createDB():
+    """This function will check for the existance of the
+    sqlite database and create it if it doesn't exist. If
+    the database doesn't exist, the installer script will
+    launch, prompting the user for the bot iD.
+    """
+
 
     conn = db.connect('.telegram_for_later.db')
     c = conn.cursor()
-
     try:
         text='create table link(links varchar primary key);'
         c.execute(text)
-
     except db.OperationalError:
-        return 1
+        return
 
-    return 0
+    installer(conn, c)
 
+    return
+
+def testBuild():
+
+    os.system('rm .telegram_for_later.db')
+    return
 
 
 if __name__ == '__main__':
-    installer()
-    print "Test"
+    testBuild()
+    createDB()
