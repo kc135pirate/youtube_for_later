@@ -76,7 +76,8 @@ def main():
         token = x[0]
 
     apiAddress = 'https://api.telegram.org/bot' + token
-
+    messageJSON = urllib.urlopen(apiAddress).read()
+    print messageJSON
 
     c.close()
     return
