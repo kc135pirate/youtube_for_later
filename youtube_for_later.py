@@ -31,11 +31,12 @@ def createBotTable(conn, c):
     ID and will store it in the sqlite database.
     """
 
+
     c.execute('create table token(bot_token varchar);')
     token = raw_input('Please enter your Telegram Bot token:')
-    dbEntry = 'insert into token values (\'%s\');' % token
+    dbEntry = 'insert into token (bot_token) values (\'%s\');' % token
     c.execute(dbEntry)
-    conn.commit
+    conn.commit()
     return
 
 def createDB():
@@ -49,9 +50,10 @@ def createDB():
     conn = db.connect('.telegram_for_later.db')
     c = conn.cursor()
     try:
-        text='create table link(links varchar primary key);'
+        text='create table link(chatid int primary key, links varchar);'
         c.execute(text)
     except db.OperationalError:
+        c.close()
         return
 
     createBotTable(conn, c)
@@ -63,7 +65,23 @@ def testBuild():
     os.system('rm .telegram_for_later.db')
     return
 
+def main():
+    """
+    """
+
+    conn = db.connect('.telegram_for_later.db')
+    c = conn.cursor()
+    cursorObject = c.execute('select bot_token from token;')
+    for x in cursorObject:
+        token = x[0]
+
+    apiAddress = 'https://api.telegram.org/bot' + token
+
+
+    c.close()
+    return
 
 if __name__ == '__main__':
-    testBuild()
+    #testBuild()
     createDB()
+    main()
