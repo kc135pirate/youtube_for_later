@@ -26,7 +26,7 @@ import re
 import sqlite3 as db
 import json
 
-def createBotTable(conn, c):
+def createTokenTable(conn, c):
     """This will only run on the initial setup of the
     script. It will query the user for the telegram bot
     ID and will store it in the sqlite database.
@@ -40,7 +40,7 @@ def createBotTable(conn, c):
     conn.commit()
     return
 
-def createDB():
+def startYouTubeForLater():
     """This function will check for the existance of the
     sqlite database and create it if it doesn't exist. If
     the database doesn't exist, the installer script will
@@ -54,24 +54,18 @@ def createDB():
         text='create table link(chatid int primary key, links varchar);'
         c.execute(text)
     except db.OperationalError:
+        main(conn, c)
         c.close()
         return
 
-    createBotTable(conn, c)
+    createTokenTable(conn, c)
 
     return
 
-def testBuild():
-
-    os.system('rm .telegram_for_later.db')
-    return
-
-def main():
+def main(conn, c):
     """
     """
 
-    conn = db.connect('.telegram_for_later.db')
-    c = conn.cursor()
     cursorObject = c.execute('select bot_token from token;')
     for x in cursorObject:
         token = x[0]
@@ -87,7 +81,6 @@ def main():
     c.close()
     return
 
+
 if __name__ == '__main__':
-    #testBuild()
-    createDB()
-    main()
+    startYouTubeForLater()
