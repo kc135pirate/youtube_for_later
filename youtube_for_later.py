@@ -1,9 +1,9 @@
 #!/usr/bin/python2
 # -*- coding: utf-8 -*-
 #
-#  untitled.py
+#  youtube_for_later.py
 #
-#  Copyright 2016 Unknown <travis@arch>
+#  Copyright 2016 Travis Neiheisel <tneiheis@gmail.com>
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ import os
 import urllib
 import re
 import sqlite3 as db
+import json
 
 def createBotTable(conn, c):
     """This will only run on the initial setup of the
@@ -76,8 +77,12 @@ def main():
         token = x[0]
 
     apiAddress = 'https://api.telegram.org/bot' + token
-    messageJSON = urllib.urlopen(apiAddress).read()
-    print messageJSON
+    messageJSON = urllib.urlopen(apiAddress + '/getupdates')
+    jsonObject = json.load(messageJSON)
+
+    print jsonObject
+
+    print jsonObject['result'][0]['message']['text'] # START HERE
 
     c.close()
     return
