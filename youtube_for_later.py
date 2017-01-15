@@ -22,7 +22,6 @@
 
 import os
 import urllib
-import re
 import sqlite3 as db
 import json
 
@@ -40,7 +39,7 @@ def createTokenTable(conn, c):
     conn.commit()
     return
 
-def startYouTubeForLater():
+def youTubeForLater():
     """This function will check for the existance of the
     sqlite database and create it if it doesn't exist. If
     the database doesn't exist, the installer script will
@@ -48,7 +47,7 @@ def startYouTubeForLater():
     """
 
 
-    conn = db.connect('.telegram_for_later.db')
+    conn = db.connect('.youtube_for_later.db')
     c = conn.cursor()
     try:
         text='create table link(chatid int primary key, links varchar);'
@@ -74,20 +73,22 @@ def main(conn, c):
     messageJSON = urllib.urlopen( apiAddress + '/getupdates')
     jsonObject = json.load(messageJSON)
     numberNewMessages = len(jsonObject['result'])
+    #print numberNewMessages
     for x in range(numberNewMessages):
-        print jsonObject['result'][x]
-        print '\n'
 
         try:
             messageText = jsonObject['result'][x]['message']['text']
             userID = jsonObject['result'][x]['message']['from']['id']
             messageID = jsonObject['result'][x]['message']['message_id']
+            check = dbCheck(messageText, messageID, c, conn)
+            print check
 
         except KeyError:
-            messageText = jsonObject['result'][x]['edited_message']['text']
-            userID = jsonObject['result'][x]['edited_message']['from']['id']
-            messageID = jsonObject['result'][x]['edited_message']['message_id']
-    print
+            pass
+
+
+        check = dbCheck(messageText, messageID, c, conn)
+
 
     c.close()
     return
@@ -104,13 +105,27 @@ def youtubedl(link, apiAddress):
 
     return
 
+
+def dbCheck(messageText, messageID, c, conn):
+
+    try:
+        dbEntry = 'insert into link values(' + messageID +', \'%s\');' % messageText
+        c.execute(dbEntry)
+        c.commit()
+    except:
+        pass
+
+    return 1
+
+
+'''
 def sendMessage(text, apiAddress):
     """
     """
 
     return
-
+'''
 
 if __name__ == '__main__':
-    startYouTubeForLater()
+    youTubeForLater()
     #youtubedl('https://www.youtube.com/watch?v=DhiHpFm0YU4')
