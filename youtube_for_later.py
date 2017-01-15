@@ -71,16 +71,46 @@ def main(conn, c):
         token = x[0]
 
     apiAddress = 'https://api.telegram.org/bot' + token
-    messageJSON = urllib.urlopen(apiAddress + '/getupdates')
+    messageJSON = urllib.urlopen( apiAddress + '/getupdates')
     jsonObject = json.load(messageJSON)
+    numberNewMessages = len(jsonObject['result'])
+    for x in range(numberNewMessages):
+        print jsonObject['result'][x]
+        print '\n'
 
-    print jsonObject
+        try:
+            messageText = jsonObject['result'][x]['message']['text']
+            userID = jsonObject['result'][x]['message']['from']['id']
+            messageID = jsonObject['result'][x]['message']['message_id']
 
-    print jsonObject['result'][0]['message']['text'] # START HERE
+        except KeyError:
+            messageText = jsonObject['result'][x]['edited_message']['text']
+            userID = jsonObject['result'][x]['edited_message']['from']['id']
+            messageID = jsonObject['result'][x]['edited_message']['message_id']
+    print
 
     c.close()
+    return
+
+def youtubedl(link, apiAddress):
+    """
+    """
+
+    x = os.system('youtube-dl '+ link)
+    if x == 0:
+        print 'success'
+    else:
+        print "failz"
+
+    return
+
+def sendMessage(text, apiAddress):
+    """
+    """
+
     return
 
 
 if __name__ == '__main__':
     startYouTubeForLater()
+    #youtubedl('https://www.youtube.com/watch?v=DhiHpFm0YU4')
