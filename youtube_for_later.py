@@ -43,7 +43,9 @@ def youTubeForLater():
     """This function will check for the existance of the
     sqlite database and create it if it doesn't exist. If
     the database doesn't exist, the installer script will
-    launch, prompting the user for the bot iD.
+    launch, prompting the user for the bot iD. It will then
+    call the function again which will pass the sqlite vars
+    to the main function.
     """
 
 
@@ -58,6 +60,7 @@ def youTubeForLater():
         return
 
     createTokenTable(conn, c)
+    youTubeForLater()
 
     return
 
@@ -73,59 +76,50 @@ def main(conn, c):
     messageJSON = urllib.urlopen( apiAddress + '/getupdates')
     jsonObject = json.load(messageJSON)
     numberNewMessages = len(jsonObject['result'])
-    #print numberNewMessages
+
     for x in range(numberNewMessages):
 
         try:
-            messageText = jsonObject['result'][x]['message']['text']
+            text = jsonObject['result'][x]['message']['text']
             userID = jsonObject['result'][x]['message']['from']['id']
             messageID = jsonObject['result'][x]['message']['message_id']
+            messageText = str(text)
             check = dbCheck(messageText, messageID, c, conn)
-            print check
-
+            sendMessage('farts are funny', userID, apiAddress)
         except KeyError:
             pass
 
+        if check == 1:
+            status = os.system('youtube-dl '+ messageText)
+            if status == 0:
+                message = 'Great success downloading ' + messageText
+            else:
+                message = 'No joy downloading ' + messageText
 
-        check = dbCheck(messageText, messageID, c, conn)
-
+            sendMessage(message , userID, apiAddress)
 
     c.close()
     return
 
-def youtubedl(link, apiAddress):
+def sendMessage(message, userID, apiAddress):
     """
     """
 
-    x = os.system('youtube-dl '+ link)
-    if x == 0:
-        print 'success'
-    else:
-        print "failz"
-
+    address = apiAddress + '/sendmessage?chat_id=' + str(userID) + '&text=' + message
+    urllib.urlopen(address)
     return
-
 
 def dbCheck(messageText, messageID, c, conn):
 
     try:
-        dbEntry = 'insert into link values(' + messageID +', \'%s\');' % messageText
+        dbEntry = 'insert into link values(' + str(messageID) +', \'%s\');' % messageText
         c.execute(dbEntry)
-        c.commit()
-    except:
-        pass
-
-    return 1
-
-
-'''
-def sendMessage(text, apiAddress):
-    """
-    """
-
-    return
-'''
+        conn.commit()
+        return 1
+    except db.IntegrityError:
+        return 0
 
 if __name__ == '__main__':
     youTubeForLater()
     #youtubedl('https://www.youtube.com/watch?v=DhiHpFm0YU4')
+    #sendMessage()
