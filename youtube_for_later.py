@@ -7,7 +7,7 @@
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
+#  the Free Software Foundation; either version 3 of the License, or
 #  (at your option) any later version.
 #
 #  This program is distributed in the hope that it will be useful,
@@ -56,7 +56,6 @@ def youTubeForLater():
         c.execute(text)
     except db.OperationalError:
         main(conn, c)
-        c.close()
         return
 
     createTokenTable(conn, c)
@@ -66,6 +65,13 @@ def youTubeForLater():
 
 def main(conn, c):
     """
+    This function accomplishes the bulk of the tasks. It starts out by
+    extracting the bot token from the database. It then makes a url querry
+    against the bot api which returns a json object with all the messages on
+    the server. The function then sends the message ID off to determine if the
+    message is new. ONce determined to be new, the function initiates the
+    youtube-dl function for the message. The function then sends a message to
+    the user using the url querry regarding the status of the downloads.
     """
 
     cursorObject = c.execute('select bot_token from token;')
@@ -85,7 +91,6 @@ def main(conn, c):
             messageID = jsonObject['result'][x]['message']['message_id']
             messageText = str(text)
             check = dbCheck(messageText, messageID, c, conn)
-            sendMessage('farts are funny', userID, apiAddress)
         except KeyError:
             pass
 
@@ -96,30 +101,30 @@ def main(conn, c):
             else:
                 message = 'No joy downloading ' + messageText
 
-            sendMessage(message , userID, apiAddress)
+            address = apiAddress + '/sendmessage?chat_id=' + str(userID) +\
+            '&text=' + message
+            urllib.urlopen(address)
 
     c.close()
     return
 
-def sendMessage(message, userID, apiAddress):
-    """
-    """
-
-    address = apiAddress + '/sendmessage?chat_id=' + str(userID) + '&text=' + message
-    urllib.urlopen(address)
-    return
-
 def dbCheck(messageText, messageID, c, conn):
+    """
+    This function checks to see if the message ID already exists in the db and
+    , if so, returns a 0 so that the link is not downloaded a 2nd time. If the
+    message ID is new, it is added to the db and a 1 is returned indicating the
+    file should be downloaded.
+    """
 
     try:
         dbEntry = 'insert into link values(' + str(messageID) +', \'%s\');' % messageText
-        c.execute(dbEntry)
-        conn.commit()
-        return 1
+
     except db.IntegrityError:
         return 0
 
+    c.execute(dbEntry)
+    conn.commit()
+    return 1
+
 if __name__ == '__main__':
     youTubeForLater()
-    #youtubedl('https://www.youtube.com/watch?v=DhiHpFm0YU4')
-    #sendMessage()
