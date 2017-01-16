@@ -1,4 +1,4 @@
-.db
-.mkv
-.m4a
-.webm
+*.db
+*.mkv
+*.m4a
+*.webm
