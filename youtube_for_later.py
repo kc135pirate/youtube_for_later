@@ -96,10 +96,10 @@ def main(conn, c):
 
         if check == 1:
             status = os.system('youtube-dl '+ messageText)
-            if status == 0:
-                message = 'Great success downloading ' + messageText
-            else:
+            if status == 1:
                 message = 'No joy downloading ' + messageText
+            #else:
+            #    message = 'Successfully downloaded ' + messageText
 
             address = apiAddress + '/sendmessage?chat_id=' + str(userID) +\
             '&text=' + message
@@ -107,6 +107,9 @@ def main(conn, c):
 
     c.close()
     return
+
+def sendMessage (apiAddress, message, userID):
+
 
 def dbCheck(messageText, messageID, c, conn):
     """
