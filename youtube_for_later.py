@@ -74,6 +74,7 @@ def main(conn, c):
     the user using the url querry regarding the status of the downloads.
     """
 
+
     cursorObject = c.execute('select bot_token from token;')
     for x in cursorObject:
         token = x[0]
@@ -118,6 +119,7 @@ def dbCheck(messageText, messageID, c, conn):
     message ID is new, it is added to the db and a 1 is returned indicating the
     file should be downloaded.
     """
+
 
     try:
         dbEntry = 'insert into link values(' + str(messageID) +', \'%s\');' % messageText
