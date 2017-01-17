@@ -3,7 +3,7 @@ Send YouTube links, or other supported video sites, to your very own telegram bo
 
 # Requirements
 - Script was built for and assumes user is using Linux
-- Requires youtube-dl be installed.
+- Requires youtube-dl to be installed.
 
 # Setup
 - Create a bot using [The Bot Father](https://core.telegram.org/bots#6-botfather) on Telegram.
