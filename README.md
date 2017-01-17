@@ -10,9 +10,9 @@ Send YouTube links, or other supported video sites, to your very own telegram bo
 - Copy the youtube_for_later.py file to the desired downloads folder.
 - Mark the youtube_for_later.py file as executable.
 - Run the script in your terminal and paste the bot token when prompted.
-- Add script to chronjob. 
+- Add script to chronjob.
 
 
 # Additional Tweaks
 - Edit line 98 with different option flags available in youtube-dl.
-- Uncomment lines 101 and 102 if you want notifications of successful downloads.
+- Uncomment lines 101 through 103 if you want notifications of successful downloads.
