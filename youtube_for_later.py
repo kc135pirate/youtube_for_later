@@ -97,20 +97,26 @@ def main(conn, c):
 
         if check == 1:
             status = os.system('youtube-dl '+ messageText)
-            if status == 1:
+            if status != 0:
                 message = 'No joy downloading ' + messageText
+                sendMessage(apiAddress, userID, message)
             #else:
             #    message = 'Successfully downloaded ' + messageText
-
-            address = apiAddress + '/sendmessage?chat_id=' + str(userID) +\
-            '&text=' + message
-            urllib.urlopen(address)
+            #    sendMessage(apiAddress, userID, message)
 
     c.close()
     return
 
-def sendMessage (apiAddress, message, userID):
+def sendMessage(apiAddress, userID, message):
+    """
+    Sends message to user using Telegram API. Seperate function for future
+    enhancements.
+    """
 
+
+    address = apiAddress + '/sendmessage?chat_id=' + str(userID) + '&text=' + message
+    urllib.urlopen(address)
+    return
 
 def dbCheck(messageText, messageID, c, conn):
     """
@@ -123,11 +129,12 @@ def dbCheck(messageText, messageID, c, conn):
 
     try:
         dbEntry = 'insert into link values(' + str(messageID) +', \'%s\');' % messageText
+        c.execute(dbEntry)
 
     except db.IntegrityError:
         return 0
 
-    c.execute(dbEntry)
+
     conn.commit()
     return 1
 
