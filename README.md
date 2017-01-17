@@ -7,10 +7,11 @@ Send YouTube links, or other supported video sites, to your very own telegram bo
 
 # Setup
 - Create a bot using [The Bot Father](https://core.telegram.org/bots#6-botfather) on Telegram.
-- Copy the youtube_for_later.py script to the desired downloads folder.
+- Copy the youtube_for_later.py file to the desired downloads folder.
 - Mark the youtube_for_later.py file as executable.
 - Run the script in your terminal and paste the bot token when prompted.
-- Add script to chronjob.
+- Add script to chronjob. 
+
 
 # Additional Tweaks
 - Edit line 98 with different option flags available in youtube-dl.
